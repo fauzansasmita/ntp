@@ -1,0 +1,21 @@
+---
+- name: install and startntp
+  hosts: all
+
+  tasks:
+  - name: install epel repo
+    yum: name=epel-release state=latest
+
+  - name: install ntp
+    yum: name=ntp state=latest
+    notify: restart ntpd
+
+  - name: start ntp service
+    service: name=ntpd state=started enabled=yes
+
+  - name: copy ntp.conf
+    template: src=ntp.conf.j2 dest=/etc/ntp.conf
+
+  handlers:
+  - name: restart ntp
+    service: name=ntpd state=restarted
